@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arabic Examination - Basic Arabic Language Skills</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #172554;
+      --secondary: #0d9488;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --correct-bg: #dcfce7;
+      --correct-border: #16a34a;
+      --correct-text: #14532d;
+      --incorrect-bg: #fee2e2;
+      --incorrect-border: #dc2626;
+      --incorrect-text: #7f1d1d;
+      --selected-bg: #eff6ff;
+      --selected-border: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    #login-screen {
+      max-width: 480px;
+      margin: 60px auto;
+      text-align: center;
+    }
+
+    #login-screen h1 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+    }
+
+    #login-screen p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-submit {
+      background-color: #15803d;
+      color: #ffffff;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+    }
+
+    .btn-submit:hover {
+      background-color: #166534;
+    }
+
+    .sticky-header {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .info-item {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .info-item strong {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #fef2f2;
+      border: 1.5px solid #f87171;
+      color: #b91c1c;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .question-card {
+      position: relative;
+    }
+
+    .q-number {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: block;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .question-text-box {
+      direction: rtl;
+      text-align: right;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 18px;
+      line-height: 1.8;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      direction: rtl;
+      text-align: right;
+      width: 100%;
+      padding: 12px 18px;
+      border: 1.5px solid var(--border);
+      background-color: #ffffff;
+      border-radius: 8px;
+      font-size: 1.15rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .option-btn.selected {
+      background-color: var(--selected-bg);
+      border-color: var(--selected-border);
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+
+    .option-btn.correct {
+      background-color: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: var(--correct-text) !important;
+      font-weight: 600;
+    }
+
+    .option-btn.incorrect {
+      background-color: var(--incorrect-bg) !important;
+      border-color: var(--incorrect-border) !important;
+      color: var(--incorrect-text) !important;
+      font-weight: 600;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-label {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+
+    .scorecard {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+
+    .scorecard-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .scorecard-header h2 {
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    .score-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .meta-box span {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .meta-box strong {
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: #f1f5f9;
+      padding: 14px 10px;
+      border-radius: 8px;
+    }
+
+    .metric-card .val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .metric-card .lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .motivational-box {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+      padding: 16px;
+      border-radius: 6px;
+    }
+
+    .motivational-box h4 {
+      color: #15803d;
+      margin-bottom: 4px;
+    }
+
+    .motivational-box p {
+      color: #166534;
+      font-size: 0.95rem;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #b91c1c;
+      margin-bottom: 12px;
+    }
+
+    .modal-message {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .submit-container {
+      text-align: center;
+      margin: 40px 0 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="card">
+    <h1>Arabic Examination</h1>
+    <p>ARA1FA102 - Basic Arabic Language Skills</p>
+    <div style="background: #f8fafc; border-radius: 8px; padding: 14px; margin-bottom: 20px; font-size: 0.9rem; text-align: left;">
+      <div><strong>Subject:</strong> ARABIC</div>
+      <div style="margin-top: 4px;"><strong>Exam Date:</strong> <span id="display-login-date"></span></div>
+      <div style="margin-top: 4px;"><strong>Time Allowed:</strong> 30 Minutes</div>
+      <div style="margin-top: 4px;"><strong>Total Questions:</strong> 60 MCQs</div>
+    </div>
+    <div class="form-group">
+      <label for="student-name">Student Full Name <span style="color: #dc2626;">*</span></label>
+      <input type="text" id="student-name" placeholder="Enter your full name to begin" required autocomplete="off" />
+    </div>
+    <button type="button" class="btn btn-primary" onclick="startExam()">Start Examination</button>
+  </div>
+
+  <!-- EXAM SCREEN CONTAINER -->
+  <div id="exam-screen" class="container hidden">
+
+    <!-- Top Scorecard -->
+    <div id="scorecard-top" class="scorecard hidden"></div>
+
+    <!-- Live Header & 30-Min Countdown Bar -->
+    <div class="sticky-header">
+      <div class="info-item">
+        <span>Candidate:</span>
+        <strong id="hdr-student-name">-</strong>
+      </div>
+      <div class="info-item">
+        <span>Questions:</span>
+        <strong>60</strong>
+      </div>
+      <div class="timer-badge">
+        <span>⏳</span>
+        <span id="countdown-display">30:00</span>
+      </div>
+    </div>
+
+    <!-- Shuffled Questions List -->
+    <div id="questions-container"></div>
+
+    <!-- Submit Section -->
+    <div id="submit-section" class="submit-container">
+      <button type="button" class="btn btn-submit" onclick="attemptSubmission()">Submit Examination</button>
+    </div>
+
+    <!-- Bottom Scorecard -->
+    <div id="scorecard-bottom" class="scorecard hidden"></div>
+  </div>
+
+  <!-- UNANSWERED WARNING MODAL -->
+  <div id="warning-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="modal-title">Incomplete Submission Warning</h3>
+      <p class="modal-message" id="modal-warning-msg">You have skipped questions. Do you still wish to submit?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Return to Exam</button>
+        <button type="button" class="btn btn-danger" onclick="confirmSubmission()">Proceed & Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration with your new Web App URL
+    const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbye7PFHFf9T1jjHXAMBeiDPc48pCNVC-JEE6oFWj9n232Rw_1EZuMHHopUzPw6hB1JLbw/exec";
+    const SUBJECT_NAME = "ARABIC";
+    const TOTAL_QUESTIONS_COUNT = 60;
+    const EXAM_DURATION_SECONDS = 30 * 60; // 30 minutes
+
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    document.getElementById('display-login-date').textContent = formattedDate;
+
+    let studentName = "";
+    let startTime = null;
+    let endTime = null;
+    let timerInterval = null;
+    let timeRemaining = EXAM_DURATION_SECONDS;
+    let selectedAnswers = {}; // { index: "A" }
+    let examSubmitted = false;
+    let activeQuestions = [];
+
+    // Most Important 60 Questions from the official syllabus
+    const rawQuestionPool = [
+      { ar: "أكمل بالحرف المناسب: «اشتريت هذا الكتاب ....... السوق»", options: [{key:"A",ar:"عَنْ"},{key:"B",ar:"مِنَ"},{key:"C",ar:"عَلَى"},{key:"D",ar:"إِلَى"}], ans: "B" },
+      { ar: "الرد المناسب على «صباح الخير» هو:", options: [{key:"A",ar:"أَهْلًا وَسَهْلًا"},{key:"B",ar:"وَعَلَيْكُمُ السَّلَامُ"},{key:"C",ar:"مَسَاءَ النُّورِ"},{key:"D",ar:"صَبَاحَ النُّورِ"}], ans: "D" },
+      { ar: "أداة الاستفهام التي نسأل بها عن الزمان هي:", options: [{key:"A",ar:"كَيْفَ"},{key:"B",ar:"كَمْ"},{key:"C",ar:"أَيْنَ"},{key:"D",ar:"مَتَى"}], ans: "D" },
+      { ar: "الحرف «ك» في «أنت شجاع كالأسد» يفيد:", options: [{key:"A",ar:"العَطْف"},{key:"B",ar:"التَّرْتِيب"},{key:"C",ar:"التَّشْبِيه"},{key:"D",ar:"التَّخْيِير"}], ans: "C" },
+      { ar: "الآية «يا أيها الناس إنا خلقناكم من ذكر وأنثى» من سورة:", options: [{key:"A",ar:"البَقَرَة"},{key:"B",ar:"الإِسْرَاء"},{key:"C",ar:"يس"},{key:"D",ar:"الحُجُرَات"}], ans: "D" },
+      { ar: "أكمل الحديث: «إن الله لا ينظر إلى صوركم وأموالكم، ولكن ينظر إلى ......»", options: [{key:"A",ar:"عِلْمِكُمْ وَكَلَامِكُمْ"},{key:"B",ar:"صَلَاتِكُمْ وَصِيَامِكُمْ"},{key:"C",ar:"قُلُوبِكُمْ وَأَعْمَالِكُمْ"},{key:"D",ar:"أَنْسَابِكُمْ وَقَبَائِلِكُمْ"}], ans: "C" },
+      { ar: "كان إياس بن معاوية قاضيًا في:", options: [{key:"A",ar:"الكُوفَة"},{key:"B",ar:"بَغْدَاد"},{key:"C",ar:"دِمَشْق"},{key:"D",ar:"البَصْرَة"}], ans: "D" },
+      { ar: "ماذا نقول في يوم العيد؟", options: [{key:"A",ar:"سَفَرٌ مُبَارَكٌ"},{key:"B",ar:"حَجٌّ مَبْرُورٌ"},{key:"C",ar:"زَوَاجٌ مُبَارَكٌ"},{key:"D",ar:"كُلُّ عَامٍ وَأَنْتُمْ بِخَيْرٍ"}], ans: "D" },
+      { ar: "الكلمة التي لا تدل على معنى كامل إلا مع غيرها هي:", options: [{key:"A",ar:"الاِسْم"},{key:"B",ar:"الفِعْل"},{key:"C",ar:"الحَرْف"},{key:"D",ar:"الجُمْلَة"}], ans: "C" },
+      { ar: "أكمل بالحرف المناسب: «قرأت كتابًا ..... تغير المناخ»", options: [{key:"A",ar:"عَنْ"},{key:"B",ar:"إِلَى"},{key:"C",ar:"حَتَّى"},{key:"D",ar:"مَعَ"}], ans: "A" },
+      { ar: "قائل الأبيات «رأيتُ الدهر مختلفًا يدور» هو:", options: [{key:"A",ar:"حَافِظ إِبْرَاهِيم"},{key:"B",ar:"الإِمَام عَلِيّ بْن أَبِي طَالِب"},{key:"C",ar:"الكُرَيْزِيّ"},{key:"D",ar:"أَحْمَد شَوْقِي"}], ans: "B" },
+      { ar: "أكمل البيت: «الأم مدرسة إذا أعددتها أعددت .......»", options: [{key:"A",ar:"رَوْضًا أَوْرَقَ إِيرَاقًا"},{key:"B",ar:"شَعْبًا طَيِّبَ الأَعْرَاقِ"},{key:"C",ar:"جِيلًا قَوِيًّا سَلِيمًا"},{key:"D",ar:"قُصُورًا عَالِيَةً"}], ans: "B" },
+      { ar: "لُقِّبَ أحمد شوقي بـ:", options: [{key:"A",ar:"أَمِير الشُّعَرَاء"},{key:"B",ar:"أَمِير المُؤْمِنِين"},{key:"C",ar:"شَاعِر النِّيل"},{key:"D",ar:"سَيِّد القُضَاة"}], ans: "A" },
+      { ar: "يقول الأب لولده: «فصناعة في اليد أمان من .......»", options: [{key:"A",ar:"الفَقْر"},{key:"B",ar:"الأَعْدَاء"},{key:"C",ar:"المَرَض"},{key:"D",ar:"الكَسَل"}], ans: "A" },
+      { ar: "الفعل «يَكْتُبُ» فعل:", options: [{key:"A",ar:"أَمْر"},{key:"B",ar:"مُضَارِع"},{key:"C",ar:"مَاضٍ"},{key:"D",ar:"نَهْي"}], ans: "B" },
+      { ar: "دخل الأعرابي في الطرفة الأولى على:", options: [{key:"A",ar:"هَارُون الرَّشِيد"},{key:"B",ar:"الطَّبِيب"},{key:"C",ar:"المَأْمُون"},{key:"D",ar:"القَاضِي إِيَاس"}], ans: "C" },
+      { ar: "بم أجاب الشيخ حين قيل له: «يا شيخ أنت أحمق أم جاهل؟»", options: [{key:"A",ar:"أَنَا أَحْمَق"},{key:"B",ar:"أَنَا بَيْنَهُمَا"},{key:"C",ar:"أَنَا عَالِم"},{key:"D",ar:"أَنَا جَاهِل"}], ans: "B" },
+      { ar: "أكمل: «الوقت كالسيف، إن لم تقطعه ........»", options: [{key:"A",ar:"قَطَعَكَ"},{key:"B",ar:"قَتَلَكَ"},{key:"C",ar:"تَرَكَكَ"},{key:"D",ar:"نَفَعَكَ"}], ans: "A" },
+      { ar: "النعمتان اللتان مغبون فيهما كثير من الناس هما:", options: [{key:"A",ar:"الصِّحَّةُ وَالفَرَاغُ"},{key:"B",ar:"المَالُ وَالبَنُونَ"},{key:"C",ar:"الشَّبَابُ وَالقُوَّةُ"},{key:"D",ar:"العِلْمُ وَالمَالُ"}], ans: "A" },
+      { ar: "أكمل: «العقل السليم في .......»", options: [{key:"A",ar:"البَيْتِ السَّعِيدِ"},{key:"B",ar:"الوَقْتِ الثَّمِينِ"},{key:"C",ar:"الجِسْمِ السَّلِيمِ"},{key:"D",ar:"القَلْبِ السَّلِيمِ"}], ans: "C" },
+      { ar: "أكمل بالحرف المناسب: «ذهب الوالد ...... المسجد»", options: [{key:"A",ar:"عَنْ"},{key:"B",ar:"إِلَى"},{key:"C",ar:"مِنْ"},{key:"D",ar:"عَلَى"}], ans: "B" },
+      { ar: "الرد المناسب على «فرصة طيبة» هو:", options: [{key:"A",ar:"الشَّرَفُ لَنَا"},{key:"B",ar:"شُكْرًا لَكَ"},{key:"C",ar:"فُرْصَة سَعِيدَة"},{key:"D",ar:"مَسَاء النُّور"}], ans: "C" },
+      { ar: "نستخدم أداة الاستفهام «كم» للسؤال عن:", options: [{key:"A",ar:"العَدَد أَوْ الثَّمَن"},{key:"B",ar:"الزَّمَان"},{key:"C",ar:"المَكَان"},{key:"D",ar:"السَّبَب"}], ans: "A" },
+      { ar: "أكمل بالحرف المناسب: «ذهبت إلى السوق ....... اشتريت بعض الفواكه»", options: [{key:"A",ar:"أَوْ"},{key:"B",ar:"مَعَ"},{key:"C",ar:"ثُمَّ"},{key:"D",ar:"عَنْ"}], ans: "C" },
+      { ar: "تأمر آيات سورة الإسراء (۲۳-٢٤) بالإحسان إلى:", options: [{key:"A",ar:"الوَالِدَيْنِ"},{key:"B",ar:"الجِيرَان"},{key:"C",ar:"اليَتَامَى"},{key:"D",ar:"المُسَافِرِين"}], ans: "A" },
+      { ar: "أي مما يلي ليس من الأمور الثلاثة التي لا تنقطع بموت الإنسان؟", options: [{key:"A",ar:"صَدَقَة جَارِيَة"},{key:"B",ar:"عِلْم يُنْتَفَعُ بِهِ"},{key:"C",ar:"وَلَد صَالِح يَدْعُو لَهُ"},{key:"D",ar:"المَال الكَثِير"}], ans: "D" },
+      { ar: "أين أعطى الشاكي ماله للتاجر؟", options: [{key:"A",ar:"فِي المَسْجِد"},{key:"B",ar:"عِنْدَ النَّهْر"},{key:"C",ar:"عِنْدَ شَجَرَةٍ فِي الصَّحْرَاءِ"},{key:"D",ar:"فِي السُّوق"}], ans: "C" },
+      { ar: "أي الكلمات الآتية فعل؟", options: [{key:"A",ar:"يَكْتُبُ"},{key:"B",ar:"فَرِيد"},{key:"C",ar:"فِي"},{key:"D",ar:"بَغْدَاد"}], ans: "A" },
+      { ar: "ماذا نقول عند التهنئة بالنجاح؟", options: [{key:"A",ar:"زَوَاجٌ مُبَارَكٌ"},{key:"B",ar:"مُبَارَكُ النَّجَاح"},{key:"C",ar:"بِالتَّوْفِيقِ وَالنَّجَاح"},{key:"D",ar:"عِيدٌ مُبَارَكٌ"}], ans: "B" },
+      { ar: "ماذا نقول عند العودة من السفر؟", options: [{key:"A",ar:"البَقَاءُ لِلَّهِ"},{key:"B",ar:"حَمْدًا لِلَّهِ عَلَى سَلَامَتِكَ"},{key:"C",ar:"مُبَارَكُ النَّجَاح"},{key:"D",ar:"سَفَرٌ مُبَارَكٌ"}], ans: "B" },
+      { ar: "البيت «الأم مدرسة إذا أعددتها» من شعر:", options: [{key:"A",ar:"حَافِظ إِبْرَاهِيم"},{key:"B",ar:"أَحْمَد شَوْقِي"},{key:"C",ar:"الإِمَام عَلِيّ بْن أَبِي طَالِب"},{key:"D",ar:"أَسْعَد الزَّوْزَنِيّ"}], ans: "A" },
+      { ar: "يُلقب حافظ إبراهيم بـ:", options: [{key:"A",ar:"أَمِير الشُّعَرَاء"},{key:"B",ar:"أَمِير المُؤْمِنِين"},{key:"C",ar:"قَاضِي البَصْرَة"},{key:"D",ar:"شَاعِر النِّيل"}], ans: "D" },
+      { ar: "ينصحنا الكريزي في أبياته بـ:", options: [{key:"A",ar:"الكَرَم"},{key:"B",ar:"الشَّجَاعَة فِي الحَرْب"},{key:"C",ar:"حُبّ الوَطَن"},{key:"D",ar:"التَّوَاضُع"}], ans: "D" },
+      { ar: "بالمال الوافر تستطيع أن تشتري أحسن الغذاء، ولكنك لا تستطيع أن تشتري:", options: [{key:"A",ar:"القُصُور"},{key:"B",ar:"الرَّغْبَة فِي الغِذَاء"},{key:"C",ar:"الأَتْبَاع"},{key:"D",ar:"أَنْدَرَ الدَّوَاء"}], ans: "B" },
+      { ar: "«لا تَكْتُبْ» فعل:", options: [{key:"A",ar:"مُضَارِع"},{key:"B",ar:"أَمْر"},{key:"C",ar:"نَهْي"},{key:"D",ar:"مَاضٍ"}], ans: "C" },
+      { ar: "أراد الأعرابي في الطرفة الأولى أن:", options: [{key:"A",ar:"يَشْتَرِيَ خُبْزًا"},{key:"B",ar:"يُصْبِحَ قَاضِيًا"},{key:"C",ar:"يَزُورَ أَهْلَهُ"},{key:"D",ar:"يَحُجَّ"}], ans: "D" },
+      { ar: "الصحة كنز لا يفهم قيمته إلا:", options: [{key:"A",ar:"الشَّبَاب"},{key:"B",ar:"مَنْ حُرِمَ مِنْهُ"},{key:"C",ar:"الأَطِبَّاء"},{key:"D",ar:"الأَغْنِيَاء"}], ans: "B" },
+      { ar: "أكمل الآية: «ولا تلقوا بأيديكم إلى ........»", options: [{key:"A",ar:"الفَقْر"},{key:"B",ar:"البَحْر"},{key:"C",ar:"التَّهْلُكَة"},{key:"D",ar:"النَّار"}], ans: "C" },
+      { ar: "موضوع أبيات أسعد الزوزني هو:", options: [{key:"A",ar:"قِيمَة الأُمّ"},{key:"B",ar:"التَّوَاضُع"},{key:"C",ar:"شُكْر الله فِي كُلّ وَقْت"},{key:"D",ar:"ذِكْر المَرْء بَعْدَ مَوْتِهِ"}], ans: "D" },
+      { ar: "أكمل بالحرف المناسب: «جلس الولد ...... الكرسي»", options: [{key:"A",ar:"مِنْ"},{key:"B",ar:"عَنْ"},{key:"C",ar:"عَلَى"},{key:"D",ar:"إِلَى"}], ans: "C" },
+      { ar: "الرد المناسب على «تشرفت بك» هو:", options: [{key:"A",ar:"مَرْحَبًا بِكَ"},{key:"B",ar:"وَأَنَا أَيْضًا"},{key:"C",ar:"فُرْصَة سَعِيدَة"},{key:"D",ar:"الشَّرَفُ لَنَا"}], ans: "D" },
+      { ar: "نستخدم أداة الاستفهام «لماذا» للسؤال عن:", options: [{key:"A",ar:"السَّبَب"},{key:"B",ar:"العَدَد"},{key:"C",ar:"المَكَان"},{key:"D",ar:"الزَّمَان"}], ans: "A" },
+      { ar: "أكمل الآية: «إن أكرمكم عند الله .......»", options: [{key:"A",ar:"أَغْنَاكُمْ"},{key:"B",ar:"أَتْقَاكُمْ"},{key:"C",ar:"أَعْلَمُكُمْ"},{key:"D",ar:"أَقْوَاكُمْ"}], ans: "B" },
+      { ar: "إلى أين أرسل القاضي إياس الشاكي؟", options: [{key:"A",ar:"إِلَى السُّوق"},{key:"B",ar:"إِلَى الشَّجَرَة"},{key:"C",ar:"إِلَى بَيْتِ التَّاجِر"},{key:"D",ar:"إِلَى الشُّرْطَة"}], ans: "B" },
+      { ar: "ماذا نقول عند فعل معروف أو مساعدة؟", options: [{key:"A",ar:"سَفَرٌ مُبَارَكٌ"},{key:"B",ar:"عِيدٌ مُبَارَكٌ"},{key:"C",ar:"البَقَاءُ لِلَّهِ"},{key:"D",ar:"جَزَاكَ اللَّهُ خَيْرًا"}], ans: "D" },
+      { ar: "المراد من «فلم تبق الملوك ولا القصور» أن:", options: [{key:"A",ar:"الدُّنْيَا زَائِلَة وَلَا شَيْء فِيهَا يَبْقَى"},{key:"B",ar:"المُلُوك بَاقُونَ دَائِمًا"},{key:"C",ar:"بِنَاء القُصُور وَاجِب"},{key:"D",ar:"الحُزْن يَدُوم أَبَدًا"}], ans: "A" },
+      { ar: "يقول أحمد شوقي إن المرء يذكر بعد موته بـ:", options: [{key:"A",ar:"المَال"},{key:"B",ar:"الأَوْلَاد فَقَط"},{key:"C",ar:"الجَمَائِل (الأَعْمَال الحَسَنَة)"},{key:"D",ar:"القُصُور"}], ans: "C" },
+      { ar: "الفعل «كَتَبَ» فعل:", options: [{key:"A",ar:"مَاضٍ"},{key:"B",ar:"أَمْر"},{key:"C",ar:"مُضَارِع"},{key:"D",ar:"نَهْي"}], ans: "A" },
+      { ar: "من صفات الوقت أنه:", options: [{key:"A",ar:"يَعُودُ إِذَا انْقَضَى"},{key:"B",ar:"لَا يُبَاعُ وَلَا يُشْتَرَى وَلَا يُسْتَعَارُ"},{key:"C",ar:"يُشْتَرَى بِالمَالِ"},{key:"D",ar:"يُسْتَعَارُ مِنَ الآخَرِينَ"}], ans: "B" },
+      { ar: "جمع «قصر» هو:", options: [{key:"A",ar:"قِصَار"},{key:"B",ar:"قَصَرَات"},{key:"C",ar:"أَقْصَار"},{key:"D",ar:"قُصُور"}], ans: "D" },
+      { ar: "أكمل بالحرف المناسب: «سأنتظرك هنا ....... المساء»", options: [{key:"A",ar:"حَتَّى"},{key:"B",ar:"عَنْ"},{key:"C",ar:"مَعَ"},{key:"D",ar:"عَلَى"}], ans: "A" },
+      { ar: "الرد المناسب على «مع السلامة» هو:", options: [{key:"A",ar:"وَعَلَيْكُمُ السَّلَامُ"},{key:"B",ar:"مَرْحَبًا بِكَ"},{key:"C",ar:"فِي أَمَانِ اللَّهِ / إِلَى اللِّقَاءِ"},{key:"D",ar:"صَبَاحَ النُّورِ"}], ans: "C" },
+      { ar: "كيف عرف القاضي إياس أن التاجر خائن؟", options: [{key:"A",ar:"أَتَى الشَّاكِي بِدَلِيلٍ"},{key:"B",ar:"وَجَدَ المَالَ فِي بَيْتِهِ"},{key:"C",ar:"لَمَّا قَالَ عَنِ الشَّجَرَةِ: «إِنَّهَا بَعِيدَةٌ»"},{key:"D",ar:"جَاءَ شَاهِدٌ"}], ans: "C" },
+      { ar: "ماذا نقول عند الوفاة والعزاء؟", options: [{key:"A",ar:"زَوَاجٌ مُبَارَكٌ"},{key:"B",ar:"إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ"},{key:"C",ar:"تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمْ"},{key:"D",ar:"مُبَارَكُ النَّجَاح"}], ans: "B" },
+      { ar: "أنواع الكلمة في العربية هي:", options: [{key:"A",ar:"اِسْمٌ وَفِعْلٌ وَحَرْفٌ"},{key:"B",ar:"مَاضٍ وَمُضَارِعٌ وَأَمْرٌ"},{key:"C",ar:"مُفْرَدٌ وَمُثَنًّى وَجَمْعٌ"},{key:"D",ar:"مُذَكَّرٌ وَمُؤَنَّثٌ وَجَمْعٌ"}], ans: "A" },
+      { ar: "أكمل: «العمل شرفٌ، والعمل كسب، والعمل .......»", options: [{key:"A",ar:"ثَرْوَة"},{key:"B",ar:"رَاحَة"},{key:"C",ar:"كَنْز"},{key:"D",ar:"تَعَب"}], ans: "C" },
+      { ar: "«أُكْتُبْ» فعل:", options: [{key:"A",ar:"مَاضٍ"},{key:"B",ar:"أَمْر"},{key:"C",ar:"نَهْي"},{key:"D",ar:"مُضَارِع"}], ans: "B" },
+      { ar: "جمع «كنز» هو:", options: [{key:"A",ar:"كِنَاز"},{key:"B",ar:"كُنُوز"},{key:"C",ar:"كَنْزَات"},{key:"D",ar:"أَكْنَاز"}], ans: "B" },
+      { ar: "نستخدم أداة الاستفهام «مَنْ» للسؤال عن:", options: [{key:"A",ar:"الشَّخْص (العاقل)"},{key:"B",ar:"المَكَان"},{key:"C",ar:"الزَّمَان"},{key:"D",ar:"السَّبَب"}], ans: "A" },
+      { ar: "الرد المناسب على «حج مبرور» هو:", options: [{key:"A",ar:"مَرْحَبًا بِكَ"},{key:"B",ar:"تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمْ"},{key:"C",ar:"وَأَنَا أَيْضًا"},{key:"D",ar:"آمِينَ، شُكْرًا"}], ans: "B" }
+    ];
+
+    // Fisher-Yates Array Shuffling
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Exam Starter
+    function startExam() {
+      const nameInput = document.getElementById('student-name');
+      const val = nameInput.value.trim();
+      if (!val) {
+        alert("Please enter your full name to proceed with the exam.");
+        nameInput.focus();
+        return;
+      }
+      studentName = val;
+      startTime = new Date();
+
+      document.getElementById('hdr-student-name').textContent = studentName;
+
+      // Shuffle the 60 questions randomly for this session
+      activeQuestions = shuffleArray(rawQuestionPool).slice(0, TOTAL_QUESTIONS_COUNT);
+
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('exam-screen').classList.remove('hidden');
+
+      renderExamQuestions();
+      startTimer();
+      window.scrollTo(0, 0);
+    }
+
+    // Render questions without hints, translations, or instant locks
+    function renderExamQuestions() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = "";
+
+      activeQuestions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = "card question-card";
+        card.id = `q-card-${index}`;
+
+        let optionsHtml = "";
+        q.options.forEach(opt => {
+          optionsHtml += `
+            <button type="button" 
+                    class="option-btn" 
+                    id="opt-${index}-${opt.key}" 
+                    onclick="pickOption(${index}, '${opt.key}')">
+              <span>${opt.ar}</span>
+              <span class="option-label">${opt.key}</span>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <span class="q-number">Question ${index + 1} of ${TOTAL_QUESTIONS_COUNT}</span>
+          <div class="question-text-box">${q.ar}</div>
+          <div class="options-grid">${optionsHtml}</div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Allow user to select and freely change answer without instant feedback
+    function pickOption(qIndex, key) {
+      if (examSubmitted) return;
+
+      selectedAnswers[qIndex] = key;
+
+      const q = activeQuestions[qIndex];
+      q.options.forEach(opt => {
+        const btn = document.getElementById(`opt-${qIndex}-${opt.key}`);
+        if (opt.key === key) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    }
+
+    // 30-Minute Timer Mechanism
+    function startTimer() {
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert("Time is up! Your examination will now be submitted automatically.");
+          executeSubmission();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timeRemaining / 60);
+      const secs = timeRemaining % 60;
+      const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const el = document.getElementById('countdown-display');
+      if (el) el.textContent = formatted;
+    }
+
+    // Submission Checks
+    function attemptSubmission() {
+      const answeredTotal = Object.keys(selectedAnswers).length;
+      const skippedCount = TOTAL_QUESTIONS_COUNT - answeredTotal;
+
+      if (skippedCount > 0) {
+        document.getElementById('modal-warning-msg').textContent = 
+          `You have ${skippedCount} unanswered question${skippedCount > 1 ? 's' : ''}. Are you sure you want to finish the examination now?`;
+        document.getElementById('warning-modal').style.display = 'flex';
+      } else {
+        executeSubmission();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('warning-modal').style.display = 'none';
+    }
+
+    function confirmSubmission() {
+      closeModal();
+      executeSubmission();
+    }
+
+    // Submission, Feedback Revelation and Google Sheets Sync
+    function executeSubmission() {
+      if (examSubmitted) return;
+      examSubmitted = true;
+      if (timerInterval) clearInterval(timerInterval);
+      endTime = new Date();
+
+      document.getElementById('submit-section').classList.add('hidden');
+
+      let score = 0;
+      const attended = Object.keys(selectedAnswers).length;
+      const unattended = TOTAL_QUESTIONS_COUNT - attended;
+
+      // Lock buttons and reveal correct/incorrect answers
+      activeQuestions.forEach((q, idx) => {
+        const chosen = selectedAnswers[idx];
+        if (chosen === q.ans) {
+          score++;
+        }
+
+        q.options.forEach(opt => {
+          const btn = document.getElementById(`opt-${idx}-${opt.key}`);
+          btn.disabled = true;
+          btn.classList.remove('selected');
+
+          if (opt.key === q.ans) {
+            btn.classList.add('correct');
+          } else if (chosen === opt.key && chosen !== q.ans) {
+            btn.classList.add('incorrect');
+          }
+        });
+      });
+
+      const percentage = Math.round((score / TOTAL_QUESTIONS_COUNT) * 100);
+
+      // Duration taken
+      const elapsedSeconds = EXAM_DURATION_SECONDS - timeRemaining;
+      const mins = Math.floor(elapsedSeconds / 60);
+      const secs = elapsedSeconds % 60;
+      const timeTakenStr = `${mins}m ${secs}s`;
+
+      // Grading and Feedback notes
+      let grade = "F";
+      let motivationalHeading = "";
+      let motivationalNote = "";
+
+      if (percentage >= 90) {
+        grade = "A+";
+        motivationalHeading = "Outstanding Performance! 🌟";
+        motivationalNote = "Exceptional mastery of Arabic language skills, grammar, and literature. Keep up this brilliant standard!";
+      } else if (percentage >= 80) {
+        grade = "A";
+        motivationalHeading = "Excellent Effort! 👏";
+        motivationalNote = "Very strong proficiency shown across language skills. Reviewing minor mistakes will elevate your command even further.";
+      } else if (percentage >= 70) {
+        grade = "B+";
+        motivationalHeading = "Very Good Job! 👍";
+        motivationalNote = "Good command of Arabic fundamentals. Revisit the poetic verses and grammatical rules for optimal accuracy.";
+      } else if (percentage >= 60) {
+        grade = "B";
+        motivationalHeading = "Good Performance! 📘";
+        motivationalNote = "Fair grasp of basic rules and texts. Consistent revision of Arabic sentence structures will help boost your score.";
+      } else if (percentage >= 50) {
+        grade = "C";
+        motivationalHeading = "Satisfactory Effort! ✍️";
+        motivationalNote = "You cleared the required passing standard. Focus on expanding vocabulary and mastering verb forms to secure higher bands.";
+      } else {
+        grade = "Needs Improvement";
+        motivationalHeading = "Keep Learning and Practicing! 💪";
+        motivationalNote = "Do not be discouraged. Regular reading of passages, memorizing question tools, and revisiting lesson glossaries will bring steady improvement.";
+      }
+
+      const timestamp = endTime.toLocaleString('en-GB');
+
+      // Scorecard HTML
+      const scorecardHtml = `
+        <div class="scorecard-header">
+          <h2>Examination Performance Card</h2>
+          <span style="font-weight: 700; color: #16a34a; font-size: 1.1rem;">Status: Submitted</span>
+        </div>
+
+        <div class="score-meta-grid">
+          <div class="meta-box">
+            <span>Student Name</span>
+            <strong>${studentName}</strong>
+          </div>
+          <div class="meta-box">
+            <span>Subject</span>
+            <strong>${SUBJECT_NAME}</strong>
+          </div>
+          <div class="meta-box">
+            <span>Exam Date</span>
+            <strong>${formattedDate}</strong>
+          </div>
+          <div class="meta-box">
+            <span>Submission Time</span>
+            <strong>${timestamp}</strong>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="val">${TOTAL_QUESTIONS_COUNT}</div>
+            <div class="lbl">Total Questions</div>
+          </div>
+          <div class="metric-card">
+            <div class="val">${attended}</div>
+            <div class="lbl">Attended</div>
+          </div>
+          <div class="metric-card">
+            <div class="val">${unattended}</div>
+            <div class="lbl">Unattended</div>
+          </div>
+          <div class="metric-card">
+            <div class="val">${timeTakenStr}</div>
+            <div class="lbl">Time Taken</div>
+          </div>
+          <div class="metric-card">
+            <div class="val">${score} / ${TOTAL_QUESTIONS_COUNT}</div>
+            <div class="lbl">Total Score</div>
+          </div>
+          <div class="metric-card">
+            <div class="val">${percentage}%</div>
+            <div class="lbl">Percentage</div>
+          </div>
+          <div class="metric-card">
+            <div class="val" style="color: #4f46e5;">${grade}</div>
+            <div class="lbl">Final Grade</div>
+          </div>
+        </div>
+
+        <div class="motivational-box">
+          <h4>${motivationalHeading}</h4>
+          <p>${motivationalNote}</p>
+        </div>
+      `;
+
+      const topCard = document.getElementById('scorecard-top');
+      const bottomCard = document.getElementById('scorecard-bottom');
+      topCard.innerHTML = scorecardHtml;
+      bottomCard.innerHTML = scorecardHtml;
+
+      topCard.classList.remove('hidden');
+      bottomCard.classList.remove('hidden');
+
+      topCard.scrollIntoView({ behavior: 'smooth' });
+
+      // Silent Google Sheets Integration matching your Google Sheet Columns A to J
+      syncToGoogleSheets({
+        timestamp: timestamp,
+        studentName: studentName,
+        subject: SUBJECT_NAME,
+        totalQuestions: TOTAL_QUESTIONS_COUNT,
+        timeTaken: timeTakenStr,
+        attended: attended,
+        unattended: unattended,
+        score: score,
+        percentage: percentage + "%",
+        grade: grade
+      });
+    }
+
+    // Silent background transmission
+    function syncToGoogleSheets(payload) {
+      if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes("YOUR_GOOGLE_SHEET_WEB_APP_URL")) {
+        return;
+      }
+
+      fetch(GOOGLE_SHEET_WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      }).catch(err => {
+        // Silently swallow errors
+      });
+    }
+  </script>
+</body>
+</html>
